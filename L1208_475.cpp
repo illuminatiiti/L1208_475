@@ -1,6 +1,12 @@
-﻿
-int solution_count;        
+﻿#include <iostream>
+#include <cmath>
+using namespace std;
 
+int solution_count;        
+int const PRINT_FREQUENCY = 10000;
+int const COOLING_STEPS = 1000;
+int const STEPS_PER_TEMP = 1000;
+double const K = 0.01;
 
 void solution_count_update(tsp_solution* s, tsp_instance* t) {
     solution_count = solution_count + 1;
@@ -9,102 +15,15 @@ void solution_count_update(tsp_solution* s, tsp_instance* t) {
     }
 }
 
-/*  Use random sampling to provide a heuristic solution to a given
-    optimization problem.
-*/
-void random_sampling(tsp_instance* t, int nsamples, tsp_solution* s) {
-    tsp_solution s_now;             /* current tsp solution */
-    double best_cost;               /* best cost so far */
-    double cost_now;                /* current cost */
-    int i;                          /* counter */
-
-    initialize_solution(t->n, &s_now);
-    best_cost = solution_cost(&s_now, t);
-    copy_solution(&s_now, s);
-
-    for (i = 1; i <= nsamples; i++) {
-        random_solution(&s_now);
-        cost_now = solution_cost(&s_now, t);
-
-        if (cost_now < best_cost) {
-            best_cost = cost_now;
-            copy_solution(&s_now, s);
-        }
-
-        solution_count_update(&s_now, t);
-    }
-}
-
-/*  Use hill climbing to provide a heuristic solution to a given
-    optimization problem.
-*/
-
-void hill_climbing(tsp_instance* t, tsp_solution* s) {
-    double cost;            /* best cost so far */
-    double delta;           /* swap cost */
-    int i, j;               /* counters */
-    bool stuck;             /* did I get a better solution? */
-
-    initialize_solution(t->n, s);
-    random_solution(s);
-    cost = solution_cost(s, t);
-
-    do {
-        stuck = true;
-        for (i = 1; i < t->n; i++) {
-            for (j = i + 1; j <= t->n; j++) {
-                delta = transition(s, t, i, j);
-                if (delta < 0) {
-                    stuck = false;
-                    cost = cost + delta;
-                }
-                else {
-                    transition(s, t, j, i);
-                }
-                solution_count_update(s, t);
-            }
-        }
-    } while (stuck);
-}
-
-void repeated_hill_climbing(tsp_instance* t, int nsamples, tsp_solution* bestsol) {
-    tsp_solution s;                 /* current tsp solution */
-    double best_cost;               /* best cost so far */
-    double cost_now;                /* current cost */
-    int i;                          /* counter */
-
-    initialize_solution(t->n, &s);
-    best_cost = solution_cost(&s, t);
-    copy_solution(&s, bestsol);
-
-    for (i = 1; i <= nsamples; i++) {
-        hill_climbing(t, &s);
-        cost_now = solution_cost(&s, t);
-        if (cost_now < best_cost) {
-            best_cost = cost_now;
-            copy_solution(&s, bestsol);
-        }
-    }
-}
-
-/*	These routines implement simulated annealing.  Pairs of components
-    of the same type will be swapped at random, and the new arrangment
-    accepted either if (1) it is an improvement, or (2) the penalty is
-    less than a random number, which is a function of the temperature
-    of the system.
-
-    We are seeking to *minimize* the current_value.
-*/
-
 void anneal(tsp_instance* t, tsp_solution* s) {
-    int x, y;                       /* pair of items to swap */
-    int i, j;                       /* counters */
-    bool accept_win, accept_loss;   /* conditions to accept transition */
-    double temperature;             /* the current system temp */
-    double current_value;           /* value of current state */
-    double start_value;             /* value at start of loop */
-    double delta;                   /* value after swap */
-    double exponent;                /* exponent for energy funct */
+    int x, y;                       /* пара точек для перестановки */
+    int i, j;                       /* счетчики */
+    bool accept_win, accept_loss;   /* условия принятия перехода */
+    double temperature;             /* текущая температура системы */
+    double current_value;           /* текущее значение */
+    double start_value;             /* значение на момент начала цикла */
+    double delta;                   /* значение после обмена */
+    double exponent;                /* показатель степени для функции энерг. состояния */
 
     temperature = INITIAL_TEMPERATURE;
 

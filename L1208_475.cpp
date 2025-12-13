@@ -16,14 +16,14 @@ void solution_count_update(tsp_solution* s, tsp_instance* t) {
 }
 
 void anneal(tsp_instance* t, tsp_solution* s) {
-    int x, y;                       /* pair of items to swap */
-    int i, j;                       /* counters */
-    bool accept_win, accept_loss;   /* conditions to accept transition */
-    double temperature;             /* the current system temp */
-    double current_value;           /* value of current state */
-    double start_value;             /* value at start of loop */
-    double delta;                   /* value after swap */
-    double exponent;                /* exponent for energy funct */
+    int x, y;                       /* пара точек для перестановки */
+    int i, j;                       /* счетчики */
+    bool accept_win, accept_loss;   /* условия принятия перехода */
+    double temperature;             /* текущая температура системы */
+    double current_value;           /* текущее значение */
+    double start_value;             /* значение на момент начала цикла */
+    double delta;                   /* значение после обмена */
+    double exponent;                /* показатель степени для функции энерг. состояния */
 
     temperature = INITIAL_TEMPERATURE;
 

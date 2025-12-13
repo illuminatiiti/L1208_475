@@ -1,6 +1,13 @@
-﻿
-int solution_count;        
+﻿#include <iostream>
+#include <cmath>
+using namespace std;
 
+int solution_count;        
+int const PRINT_FREQUENCY = 10000;
+int const COOLING_STEPS = 1000;
+int const STEPS_PER_TEMP = 1000;
+double const K = 0.01;
+double const E = exp(1);
 
 void solution_count_update(tsp_solution* s, tsp_instance* t) {
     solution_count = solution_count + 1;
@@ -12,6 +19,7 @@ void solution_count_update(tsp_solution* s, tsp_instance* t) {
 /*  Use random sampling to provide a heuristic solution to a given
     optimization problem.
 */
+
 void random_sampling(tsp_instance* t, int nsamples, tsp_solution* s) {
     tsp_solution s_now;             /* current tsp solution */
     double best_cost;               /* best cost so far */
